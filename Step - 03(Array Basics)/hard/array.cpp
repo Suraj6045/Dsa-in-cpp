@@ -316,6 +316,83 @@ int larg_sub_0_best(vector<int> arr , int n){
     return max;
 }
 
+int number_of_sub_xor(vector<int> arr , int n , int target){
+    int cnt = 0;
+    for(int i=0 ; i<n ; i++){
+        int x = 0;
+        for(int j=i ; j<n ; j++){
+            x ^= arr[j];
+            if(x==target){
+                cnt++;
+            }
+        }
+    }
+    return cnt;
+}
+
+int number_of_sub_xor_best(vector<int> arr , int n , int target){
+    int cnt = 0;
+    int x = 0;
+    map<int,int> prexor;
+    for(int i=0 ; i<n ; i++){
+        x ^= arr[i];
+        if(x==target){
+            cnt++;
+        }
+        int xrem = x^target;   // xrem^k = x  =>  (xrem^k)^k = x^k  =>  xrem = x^k  => k is our target
+        if(prexor.find(xrem) != prexor.end()){  // check if xrem have ever appeared before?
+            cnt += prexor[xrem];  // how many times xrem came before
+        }
+        prexor[x]++;
+    }
+    return cnt;
+}
+
+vector<vector<int>> merge_overlapping_subintervals(vector<vector<int>> arr){
+    vector<vector<int>> ans;
+    sort(arr.begin(),arr.end());
+    for(int i=0 ; i<arr.size() ; i++){
+        int st = arr[i][0];
+        int end = arr[i][1];
+        if(ans.size()!=0 && end<=ans.back()[1]){
+            continue;
+        }
+        else{
+            for(int j=i+1 ; j<arr.size() ; j++){
+                if(end>arr[j][0]){
+                    end = max(end,arr[j][1]);
+                }
+                else{
+                    break;
+                }
+            }
+            ans.push_back({st,end});
+        }
+    }
+    return ans;
+}
+
+vector<vector<int>> merge_overlapping_subintervals_best(vector<vector<int>> arr){
+    vector<vector<int>> ans;
+    sort(arr.begin(),arr.end());
+    for(int i=0 ; i<arr.size() ; i++){
+        int st = arr[i][0];
+        int end = arr[i][1];
+        if(ans.size()!=0 && ans.back()[1]>end){
+            continue;
+        }
+        else if(ans.size()==0 || st>ans.back()[1]){
+            ans.push_back(arr[i]);
+        }
+        else{
+            if(st<=ans.back()[1]){
+                ans.back()[1] = max(end,ans.back()[1]);
+            }
+        }
+    }
+    return ans;
+}
+
 
 
  
@@ -323,19 +400,21 @@ int main(){
     vector<vector<int>> arr1;
     vector<int> arr2;
     arr1 = {
-        {1,2,3,4},
-        {3,4,5,5},
-        {2,7,6,6},
-        {1,9,8,7}
+        {1,4},
+        {3,5},
+        {11,15},
+        {12,13},
+        {2,7},
+        {1,9}
         };
-    arr2 = {-2,0,4,-4,1,-1,0,2,0,2,1};
+    arr2 = {1,2,3,4,3};
 
-    cout << larg_sub_0_best(arr2,arr2.size());
+    vector<vector<int>> ans = merge_overlapping_subintervals_best(arr1);
     
-    // for(int i=0 ; i<ans.size() ; i++){
-    //     for(int j=0 ; j<ans[0].size() ; j++){
-    //         cout << ans[i][j] << " ";
-    //     }
-    //     cout << "\n";
-    // }
+    for(int i=0 ; i<ans.size() ; i++){
+        for(int j=0 ; j<ans[0].size() ; j++){
+            cout << ans[i][j] << " ";
+        }
+        cout << "\n";
+    }
 }
