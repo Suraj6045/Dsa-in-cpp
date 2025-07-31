@@ -359,7 +359,7 @@ vector<vector<int>> merge_overlapping_subintervals(vector<vector<int>> arr){
         }
         else{
             for(int j=i+1 ; j<arr.size() ; j++){
-                if(end>arr[j][0]){
+                if(end>=arr[j][0]){
                     end = max(end,arr[j][1]);
                 }
                 else{
@@ -378,43 +378,126 @@ vector<vector<int>> merge_overlapping_subintervals_best(vector<vector<int>> arr)
     for(int i=0 ; i<arr.size() ; i++){
         int st = arr[i][0];
         int end = arr[i][1];
-        if(ans.size()!=0 && ans.back()[1]>end){
+        if(ans.size()!=0 && ans.back()[1]>=end){
             continue;
         }
         else if(ans.size()==0 || st>ans.back()[1]){
             ans.push_back(arr[i]);
         }
         else{
-            if(st<=ans.back()[1]){
-                ans.back()[1] = max(end,ans.back()[1]);
-            }
+            ans.back()[1] = max(end,ans.back()[1]);
         }
     }
     return ans;
 }
 
+void merge_sorted_arrays(vector<int> &arr1 , vector<int> &arr2){
+    int n = arr1.size();
+    int m = arr2.size();
+    int i = 0;
+    int j = 0;
+    vector<int> new_arr;
+    while(i<n && j<m){
+        if(arr1[i]>arr2[j]){
+            new_arr.push_back(arr2[j]);
+            j++;
+        }
+        else{
+            new_arr.push_back(arr1[i]);
+            i++;
+        }
+    }
+    while(i<n){
+        new_arr.push_back(arr1[i]);
+        i++;
+    }
+    while(j<m){
+        new_arr.push_back(arr2[j]);
+        j++;
+    }
+
+    i = 0;
+    for(auto it : new_arr){
+        if(i<n){
+            arr1[i] = it;
+            i++;
+        }
+        else{
+            arr2[i-n] = it;
+            i++;
+        }
+    }
+}
+
+void merge_sorted_arrays_best1(vector<int> &arr1 , vector<int> &arr2){
+    int n = arr1.size();
+    int m = arr2.size();
+    int i = n-1;
+    int j = 0;
+    while(j<m && i>=0){
+        if(arr1[i]>arr2[j]){
+            swap(arr1[i],arr2[j]);
+        }
+        else{
+            break;
+        }
+        i--;
+        j++;
+    }
+    sort(arr1.begin(),arr1.end());
+    sort(arr2.begin(),arr2.end());
+}
+
+void merge_sorted_arrays_best2(vector<int> &arr1 , vector<int> &arr2){
+    int n = arr1.size();
+    int m = arr2.size();
+    int len = n+m;
+    int gap = (len)/2 + (len)%2;    // ceil division
+    while(gap>0){
+        int i = 0;
+        int j = i+gap;
+        while(j<len){
+            if(i<n && j<n){   // both in arr1
+                if(arr1[i]>arr1[j]){
+                    swap(arr1[i],arr1[j]);
+                }
+            }
+            else if(i<n && j>=n){  // i is in arr1 and j is in arr2
+                if(arr1[i]>arr2[j-n]){
+                    swap(arr1[i],arr2[j-n]);
+                }
+            }
+            else{
+                if(arr2[i-n]>arr2[j-n]){   // both in arr2
+                    swap(arr2[i-n],arr2[j-n]);
+                }
+            }
+            i++;
+            j++;
+        }
+        if(gap==1) return;
+        gap = (gap/2) + (gap%2);    // ceil division
+    }
+}
+
+
+
 
 
  
 int main(){
-    vector<vector<int>> arr1;
+    vector<int> arr1;
     vector<int> arr2;
-    arr1 = {
-        {1,4},
-        {3,5},
-        {11,15},
-        {12,13},
-        {2,7},
-        {1,9}
-        };
-    arr2 = {1,2,3,4,3};
-
-    vector<vector<int>> ans = merge_overlapping_subintervals_best(arr1);
+    arr1 = {3,4,6,7};
+    arr2 = {1,2,10,11};
     
-    for(int i=0 ; i<ans.size() ; i++){
-        for(int j=0 ; j<ans[0].size() ; j++){
-            cout << ans[i][j] << " ";
-        }
-        cout << "\n";
+    merge_sorted_arrays_best2(arr1,arr2);
+    
+    for(int i=0 ; i<arr1.size() ; i++){
+        cout << arr1[i] << " ";
+    }
+    cout << "\n";
+    for(int i=0 ; i<arr2.size() ; i++){
+        cout << arr2[i] << " ";
     }
 }
