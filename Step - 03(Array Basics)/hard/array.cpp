@@ -480,24 +480,131 @@ void merge_sorted_arrays_best2(vector<int> &arr1 , vector<int> &arr2){
     }
 }
 
+vector<int> missing_and_repeating(vector<int> arr){
+    int n = arr.size();
+    int x = 0;
+    int y = 0;
+    for(int i=1 ; i<=n ; i++){
+        int cnt = 0;
+        for(int j=0 ; j<n ; j++){
+            if(i==arr[j]){
+                cnt++;
+            }
+        }
+        if(cnt==0){
+            x = i;
+        }
+        if(cnt==2){
+            y = i;
+        }
+    }
+    return {x,y};
+}
 
+vector<int> missing_and_repeating_better(vector<int> arr){
+    int n = arr.size();
+    int x = 0;
+    int y = 0;
+    vector<int> check(n+1);
+    for(int i=0 ; i<n ; i++){
+        check[arr[i]]++;
+    }
+    for(int i=0 ; i<check.size() ; i++){
+        if(check[i]==0){
+            x = i;
+        }
+        if(check[i]==2){
+            y = i;
+        }
+    }
+    return {x,y};
+}
 
+vector<int> missing_and_repeating_best(vector<int> arr){
+    int n = arr.size();
+    int x = 0;
+    int y = 0;
+    int sum = 0;
+    int sum_n = 0;
+    int sum_2 = 0;
+    int sum_n_2 = 0;
+    for(int i=0 ; i<n ; i++){
+        sum += arr[i];
+        sum_n += i+1;
+        sum_2 += arr[i]*arr[i];
+        sum_n_2 += (i+1)*(i+1);
+    }
+    int x_y = sum_n - sum;
+    int x_p_y = (sum_n_2 - sum_2)/x_y;
+    x = (x_p_y+x_y)/2;
+    y = x - x_y;
+    return {x,y};
+}
+
+int count_inversions(vector<int> arr){
+    int n = arr.size();
+    int count = 0;
+    for(int i=0 ; i<n ; i++){
+        for(int j=i+1 ; j<n ; j++){
+            if(arr[i]>arr[j]){
+                count++;
+            }
+        }
+    }
+    return count; 
+}
+
+int merge(vector<int> &arr , int st , int mid , int end){
+    int x = st;
+    int y = mid+1;
+    int cnt = 0;
+    vector<int> temp;
+    while(x<=mid && y<=end){
+        if(arr[x]<=arr[y]){
+            temp.push_back(arr[x]);
+            x++;
+        }
+        else{
+            temp.push_back(arr[y]);
+            y++;
+            cnt += (mid-x)+1;
+        }
+    }
+    while(x<=mid){
+        temp.push_back(arr[x]);
+        x++;
+    }
+    while(y<=end){
+        temp.push_back(arr[y]);
+        y++;
+    }
+    for(int i=st ; i<=end ; i++){
+        arr[i]=temp[i-st];
+    }
+    return cnt;
+}
+
+int count_inversions_best(vector<int> &arr , int st , int end){
+    int mid = (st+end)/2;
+    int cnt = 0;
+    if(st==end) return cnt;
+    cnt += count_inversions_best(arr,st,mid);
+    cnt += count_inversions_best(arr,mid+1,end);
+    cnt += merge(arr,st,mid,end);
+    return cnt;
+}
 
 
  
 int main(){
     vector<int> arr1;
     vector<int> arr2;
-    arr1 = {3,4,6,7};
+    arr1 = {3,4,5,1};
     arr2 = {1,2,10,11};
     
-    merge_sorted_arrays_best2(arr1,arr2);
     
-    for(int i=0 ; i<arr1.size() ; i++){
-        cout << arr1[i] << " ";
-    }
-    cout << "\n";
-    for(int i=0 ; i<arr2.size() ; i++){
-        cout << arr2[i] << " ";
-    }
+    cout << count_inversions_best(arr1,0,arr1.size()-1);
+    // for(int i=0 ; i<ans.size() ; i++){
+    //     cout << ans[i] << " ";
+    // }
 }
