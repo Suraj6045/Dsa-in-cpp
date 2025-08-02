@@ -594,16 +594,113 @@ int count_inversions_best(vector<int> &arr , int st , int end){
     return cnt;
 }
 
+int reverse_pairs(vector<int> arr){
+    int cnt = 0;
+    int n = arr.size();
+    for(int i=0 ; i<n ; i++){
+        for(int j=i+1 ; j<n ; j++){
+            if(arr[i]>2*arr[j]){
+                cnt++;
+            }
+        }
+    }
+    return cnt;
+}
+
+void merge_(vector<int> &arr , int st , int mid , int end){
+    int x = st;
+    int y = mid+1;
+    vector<int> temp;
+    while(x<=mid && y<=end){
+        if(arr[x]<=arr[y]){
+            temp.push_back(arr[x]);
+            x++;
+        }
+        else{
+            temp.push_back(arr[y]);
+            y++;
+        }
+    }
+    while(x<=mid){
+        temp.push_back(arr[x]);
+        x++;
+    }
+    while(y<=end){
+        temp.push_back(arr[y]);
+        y++;
+    }
+    for(int i=st ; i<=end ; i++){
+        arr[i]=temp[i-st];
+    }
+}
+
+int count_pairs(vector<int> &arr , int st , int mid , int end){
+    int cnt = 0;
+    int j = mid+1;
+    for(int i=st ; i<=mid ; i++){
+        while(j<=end && arr[i]>2*arr[j]){
+            j++;
+        }
+        cnt += j-(mid+1);
+    }
+    return cnt;
+}
+
+int reverse_pairs_best(vector<int> &arr , int st , int end){
+    int cnt = 0;
+    if(st==end) return cnt;
+    int mid = (st+end)/2;
+    cnt += reverse_pairs_best(arr,st,mid);
+    cnt += reverse_pairs_best(arr,mid+1,end);
+    cnt += count_pairs(arr,st,mid,end);
+    merge_(arr,st,mid,end);
+    return cnt;
+}
+
+int max_product(vector<int> arr){
+    int n = arr.size();
+    int max = 0;
+    for(int i=0 ; i<n ; i++){
+        int prod = 1;
+        for(int j=i ; j<n ; j++){
+            prod *= arr[j];
+            if(prod>max){
+                max = prod;
+            }
+        }
+    }
+    return max;
+}
+
+int max_product_best(vector<int> arr){
+    int n = arr.size();
+    int maxi = INT_MIN;
+    int prefix_prod = 1;
+    int suffix_prod = 1;
+    for(int i=0 ; i<n ; i++){
+        prefix_prod *= arr[i];
+        suffix_prod *= arr[n-i-1];
+        if(prefix_prod==0){
+            prefix_prod=1;
+        }
+        if(suffix_prod==0){
+            suffix_prod=1;
+        }
+        maxi = max(maxi,max(prefix_prod,suffix_prod));
+    }
+    return maxi;
+}
+
 
  
 int main(){
     vector<int> arr1;
     vector<int> arr2;
-    arr1 = {3,4,5,1};
+    arr1 = {3,-4,0,1,5};
     arr2 = {1,2,10,11};
     
     
-    cout << count_inversions_best(arr1,0,arr1.size()-1);
+    cout << max_product_best(arr1);
     // for(int i=0 ; i<ans.size() ; i++){
     //     cout << ans[i] << " ";
     // }
