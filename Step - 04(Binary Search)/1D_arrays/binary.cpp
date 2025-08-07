@@ -24,12 +24,32 @@ int binary_search_recursive(vector<int> arr , int target , int st , int end){
     return -1;
 }
 
-
+int times_array_rotated(vector<int> arr){
+    int st = 0;
+    int end = arr.size()-1;
+    int min = INT_MAX;
+    while(st<=end){
+        int mid = (st+end)/2;
+        if(arr[mid]==arr[st] && arr[mid]==arr[end]){
+            st++;
+            end--;
+        }
+        if(arr[mid]>arr[st]){
+            min = st;
+            st = mid+1;
+        }
+        else {
+            min = mid;
+            end = mid-1;
+        }
+    }
+    return min+1;
+}
 
 int main(){
     vector<int> arr1;
     vector<int> arr2;
-    arr1 = {3,-4,0,1,5};
+    arr1 = {6,2,3,4,5};
     arr2 = {1,2,3,5,8,8,11};
-    cout << binary_search_recursive(arr2,8,0,6);
+    cout << times_array_rotated(arr1);
 }    
