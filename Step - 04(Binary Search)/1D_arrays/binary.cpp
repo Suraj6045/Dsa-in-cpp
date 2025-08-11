@@ -46,10 +46,89 @@ int times_array_rotated(vector<int> arr){
     return min+1;
 }
 
+int once(vector<int> arr){
+    int n = arr.size();
+    if(n==1){
+        return arr[0];
+    }
+    for(int i=0 ; i<n ; i++){
+        if(i==0){
+            if(arr[1] != arr[0]) return arr[0];
+        }
+        else if(i==n-1){
+            if(arr[n-1] != arr[n-2]) return arr[n-1];
+        }
+        else {
+            if(arr[i] != arr[i-1] && arr[i] != arr[i+1]){
+                return arr[i];
+            } 
+        }
+    }
+    return -1;
+}
+
+int once_best(vector<int> arr){
+    int n = arr.size();
+    if(arr[1] != arr[0]) return arr[0];
+    if(arr[n-1] != arr[n-2]) return arr[n-1];
+    int st = 1;
+    int end = n-2;
+    while(st<=end){
+        int mid = (st+end)/2;
+        if(arr[mid] != arr[mid-1] && arr[mid] != arr[mid+1]){
+            return arr[mid];
+        }
+        if((mid%2==0 && arr[mid] == arr[mid+1]) || (mid%2==1 && arr[mid] == arr[mid-1])){
+            st=mid+1;
+        }
+        else{
+            end = mid-1;
+        } 
+    }
+    return -1;
+}
+
+int peak(vector<int> arr){
+    int n = arr.size();
+    int st = 1;
+    int end = n-2;
+    if(arr[0]>arr[1]) return arr[0];
+    if(arr[n-1]>arr[n-2]) return arr[n-1];
+    while(st<=end){
+        int mid = (st+end)/2;
+        if(arr[mid]>arr[mid-1] && arr[mid]>arr[mid+1]){
+            return arr[mid];
+        }
+        else if(arr[mid]>arr[mid-1]){
+            st=mid+1;
+        }
+        else{
+            end = mid-1;
+        }
+    }
+}
+
+int sqrt(int num){
+    int ans=1;
+    int st=1;
+    int end = pow(num,0.5);
+    while(st<=end){
+        int mid = (st+end)/2;
+        if(pow(mid,2)<=num){
+            ans = mid;
+            st = mid+1;
+        }
+        else{
+            end = mid-1;
+        }
+    }
+    return ans;
+}
+
 int main(){
     vector<int> arr1;
     vector<int> arr2;
-    arr1 = {6,2,3,4,5};
+    arr1 = {1,2,6,5,4};
     arr2 = {1,2,3,5,8,8,11};
-    cout << times_array_rotated(arr1);
+    cout << sqrt(36);
 }    
