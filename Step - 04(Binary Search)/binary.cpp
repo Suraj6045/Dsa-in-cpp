@@ -125,10 +125,67 @@ int sqrt(int num){
     return ans;
 }
 
+int count_hours(vector<int> arr , int k){
+    int hours = 0;
+    for(int i=0 ; i<arr.size() ; i++){
+        hours += ceil(double(arr[i])/k);
+    }
+    return hours;
+}
+
+int max_el(vector<int> arr){
+    int maxi = INT_MIN;
+    for(int i=0 ; i<arr.size() ; i++){
+        if(arr[i]>maxi){
+            maxi=arr[i];
+        }
+    }
+    return maxi;
+}
+
+int koko_eating_bananas(vector<int> arr , int max_hours){
+    for(int i=1 ; i<=max_el(arr) ; i++){
+        if(count_hours(arr,i)<=max_hours){
+            return i;
+        }
+    }
+    return -1;
+}
+
+int koko_eating_bananas_best(vector<int> arr , int max_hours){
+    int st = 1;
+    int end = max_el(arr);
+    int ans = -1;
+    while(st<=end){
+        int mid = (st+end)/2;
+        if(count_hours(arr,mid)<=max_hours){
+            ans = mid;
+            end = mid-1;
+        }
+        else{
+            st = mid+1;
+        }
+    }
+    return ans;
+}
+
+int max_no_of_bouquets(vector<int> arr , int consecutive_flowers){
+    int n = arr.size();
+    int max_bouquets = n/consecutive_flowers;
+    return max_bouquets;
+}
+
+int min_days(vector<int> arr , int bouquets , int consecutive_flowers){
+    if(max_no_of_bouquets(arr,consecutive_flowers)<bouquets){
+        return -1;
+    }
+    
+}
+
 int main(){
     vector<int> arr1;
     vector<int> arr2;
     arr1 = {1,2,6,5,4};
     arr2 = {1,2,3,5,8,8,11};
-    cout << sqrt(36);
+    cout << koko_eating_bananas_best(arr1,5);
 }    
