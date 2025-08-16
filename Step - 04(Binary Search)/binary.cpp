@@ -143,6 +143,17 @@ int max_el(vector<int> arr){
     return maxi;
 }
 
+int min_el(vector<int> arr){
+    int min = INT_MAX;
+    for(int i=0 ; i<arr.size() ; i++){
+        if(arr[i]<min){
+            min=arr[i];
+        }
+    }
+    return min;
+}
+
+
 int koko_eating_bananas(vector<int> arr , int max_hours){
     for(int i=1 ; i<=max_el(arr) ; i++){
         if(count_hours(arr,i)<=max_hours){
@@ -179,13 +190,107 @@ int min_days(vector<int> arr , int bouquets , int consecutive_flowers){
     if(max_no_of_bouquets(arr,consecutive_flowers)<bouquets){
         return -1;
     }
-    
+
+    for(int day=min_el(arr) ; day<=max_el(arr) ; day++){
+        int count_boquets = 0;
+        int count = 0;
+
+        for(int j=0 ; j<arr.size() ; j++){
+            if(day<arr[j]){  // if flower at j index isn't bloomed
+                count_boquets += count/consecutive_flowers;
+                count = 0;
+            } else{  // if flower at j index is bloomed
+                count++;
+            }
+
+            if(j==arr.size()-1){
+                count_boquets += count/consecutive_flowers;
+            }
+        }
+
+        if(count_boquets>=bouquets){
+            return day;
+        }
+    }
+    return -1;
 }
+
+int min_days_best(vector<int> arr , int reqd_bouquets , int consecutive_flowers){
+    if(max_no_of_bouquets(arr,consecutive_flowers)<reqd_bouquets){
+        return -1;
+    }
+
+    int min_day = -1;
+    int st = min_el(arr);
+    int end = max_el(arr);
+    while(st<=end){
+        int current_day = (st+end)/2;
+        int made_boquets = 0;
+        int day_streak = 0;
+
+        for(int bloom_day = 0 ; bloom_day<arr.size() ; bloom_day++){
+            if(current_day<arr[bloom_day]){
+                made_boquets += day_streak/consecutive_flowers;
+                day_streak = 0;
+            } else {
+                day_streak++;
+            }
+        }
+        made_boquets += day_streak/consecutive_flowers;
+
+        if(made_boquets<reqd_bouquets){
+            st = current_day+1;
+        } else{
+            min_day = current_day;
+            end = current_day-1;
+        }
+    }
+    return min_day;
+}
+
+int smallest_divisor(vector<int> arr , int threshold){
+    for(int i=1 ; i<=max_el(arr) ; i++){
+        int sum = 0;
+        for(int j=0 ; j<arr.size() ; j++){
+            sum += ceil(double(arr[j])/i);
+        }
+        if(sum<=threshold){
+            return i;
+        }
+    }
+    return -1;
+}
+
+int smallest_divisor_best(vector<int> arr , int threshold){
+    if(threshold<arr.size()) return -1;
+    
+    int ans = INT_MAX;
+    int st = 1;
+    int end = max_el(arr);
+
+    while(st<=end){
+        int mid = (st+end)/2;
+        int sum = 0;
+
+        for(int j=0 ; j<arr.size() ; j++){
+            sum += ceil(double(arr[j])/mid);
+        }
+
+        if(sum<=threshold){
+            ans = min(mid,ans);
+            end = mid -1;
+        } else {
+            st = mid+1;
+        }
+    }
+    return ans;
+}
+
 
 int main(){
     vector<int> arr1;
     vector<int> arr2;
-    arr1 = {1,2,6,5,4};
+    arr1 = {1,2,3,10,15};
     arr2 = {1,2,3,5,8,8,11};
-    cout << koko_eating_bananas_best(arr1,5);
+    cout << smallest_divisor_best(arr1,8);
 }    
