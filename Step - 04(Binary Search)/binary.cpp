@@ -286,11 +286,229 @@ int smallest_divisor_best(vector<int> arr , int threshold){
     return ans;
 }
 
+int sum(vector<int> arr){
+    int add = 0;
+    for(int i=0 ; i<arr.size() ; i++){
+        add += arr[i];
+    }
+    return add;
+}
+
+int days_to_ship_all_products(vector<int> arr , int capacity_of_ship){
+    int days = 0;
+    int total_weight = 0;
+
+    for(int i=0 ; i<arr.size() ; i++){
+        if((total_weight+arr[i])<=capacity_of_ship){  // ship me space hai to bharte jao
+            total_weight += arr[i];
+        } else {  // when the ship is full
+            days += 1;
+            total_weight = 0;
+            total_weight += arr[i];  // for next ship
+        }
+    }
+    if(total_weight>0) days += 1;
+    
+    return days;
+}
+
+int least_capacity(vector<int> arr , int days){
+    if(days==0) return -1;
+
+    for(int i=max_el(arr) ; i<=sum(arr) ; i++){
+        if(days_to_ship_all_products(arr,i)<=days){
+            return i;
+        }
+    }
+    return -1;
+}
+
+int least_capacity_best(vector<int> arr , int days){
+    if(days==0) return -1;
+
+    int ans = -1;
+    int st = max_el(arr);
+    int end = sum(arr);
+    while(st<=end){
+        int capacity = (st+end)/2;
+
+        if(days_to_ship_all_products(arr,capacity)<=days){
+            ans = capacity;
+            end = capacity-1;
+        } else{
+            st = capacity+1;
+        }
+    }
+    return ans;
+}
+
+int kth_missing_number(vector<int> arr , int k){
+    int ans = k;
+    int n = arr.size();
+
+    for(int i=0 ; i<n-1 ; i++){
+        if(arr[i]>ans){
+            break;
+        }
+        else{
+            ans++;
+        }
+    }
+    return ans;
+}
+
+int kth_missing_number_best(vector<int> arr , int k){
+    int n = arr.size();
+
+    int st = 0;
+    int end = n-1;
+    while(st<=end){
+        int mid = (st+end)/2;
+        int missing = arr[mid]-mid-1;
+        if(missing<k){
+            st = mid+1;
+        }
+        else{
+            end = mid-1;
+        }
+    }
+    return end+1+k;
+}
+
+bool all_cows_can_fit(vector<int> arr , int distance_btw_cows , int cows){
+    sort(arr.begin(),arr.end());
+
+    int count = 1;
+    int last_cow = arr[0];
+
+    for(int i=1 ; i<arr.size() ; i++){
+        if(arr[i]-last_cow>=distance_btw_cows){
+            count++;
+            last_cow = arr[i];
+        }
+
+        if(count>=cows){
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int aggressive_cows(vector<int> arr , int cows){
+    for(int i=1 ; i<=arr[arr.size()-1]-arr[0] ; i++){
+        if(all_cows_can_fit(arr,i,cows)){
+            continue;
+        } else{
+            return i-1;
+        }
+    }
+
+    return -1;
+}
+
+int aggressive_cows_best(vector<int> arr , int cows){
+    if(arr.size()<2) return -1;
+    if(arr.size()<cows) return -1;
+    if(arr.size()==cows) return 1;
+    if(cows==1) return 0;
+
+    int st = 1;
+    int end = arr[arr.size()-1]-arr[0];
+    int ans = 0;
+    
+    while(st<=end){
+        int dist = (st+end)/2;
+        if(all_cows_can_fit(arr , dist , cows)){
+            ans = dist;
+            st = dist + 1;
+        } else {
+            end = dist - 1;
+        }
+    }
+    
+    return ans;
+}
+
+int count_students(vector<int> arr , int max_pages){
+    int pages = 0;
+    int students = 0;
+
+    for(int i=0 ; i<arr.size() ; i++){
+        if(pages+arr[i]<=max_pages){
+            pages += arr[i];
+        } else{
+            students += 1;
+            pages = arr[i];
+        }
+    }
+
+    if(pages>0) students += 1;
+
+    return students;
+}
+
+int book_allocation(vector<int> arr , int students){
+    if(arr.size()<students) return -1;
+
+    for(int i=max_el(arr) ; i<sum(arr) ; i++){
+        if(count_students(arr,i) == students) return i; 
+    }
+
+    return -1;
+}
+
+int book_allocation_best(vector<int> arr , int students){
+    if(arr.size()<students) return -1;
+
+    int st = max_el(arr);
+    int end = sum(arr);
+    while(st<=end){
+        int max_pages = (st+end)/2; 
+        if(count_students(arr,max_pages) > students){
+            st = max_pages + 1;
+        }
+        else {
+            end = max_pages-1;
+        }
+    }
+
+    if(count_students(arr,st) == students) return st;
+    else return -1;
+}
+
+int count_painters(vector<int> arr , int max_area){
+    int area = 0;
+    int painters = 0;
+
+    for(int i=0 ; i<arr.size() ; i++){
+        if(area+arr[i]<=max_area){
+            area += arr[i];
+        } else{
+            painters += 1;
+            area = arr[i];
+        }
+    }
+
+    if(area>0) painters += 1;
+
+    return painters;
+}
+
+int painters_partition(vector<int> arr , int painters){
+    if(arr.size()<painters) return -1;
+
+    for(int i=max_el(arr) ; i<=sum(arr) ; i++){
+        if(count_painters(arr,i) == painters) return i;
+    }
+    return -1;
+}
+
 
 int main(){
     vector<int> arr1;
     vector<int> arr2;
-    arr1 = {1,2,3,10,15};
+    arr1 = {10,13,9,37,13};
     arr2 = {1,2,3,5,8,8,11};
-    cout << smallest_divisor_best(arr1,8);
+    cout << painters_partition(arr1,2);
 }    
